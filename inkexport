@@ -1,0 +1,141 @@
+#!/bin/bash
+#
+# Exports selected objects from a svg to multiple resolution icons for android 
+# using inkscape's cli'.
+# author: JeyKeu <shekhanzai.baloch@gmail.com>
+
+show_files=true
+help_usage=''
+files=''
+OUTPUT="drawable/drawable"
+
+# Thanks to http://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux#23006365
+cecho(){
+    local exp=$1;
+    local color=$2;
+    if ! [[ $color =~ '^[0-9]$' ]] ; then
+       case $(echo $color | tr '[:upper:]' '[:lower:]') in
+        black) color=0 ;;
+        red) color=1 ;;
+        green) color=2 ;;
+        yellow) color=3 ;;
+        blue) color=4 ;;
+        magenta) color=5 ;;
+        cyan) color=6 ;;
+        white|*) color=7 ;; # white or invalid color
+       esac
+    fi
+    tput setaf $color;
+    echo $exp;
+    tput sgr0;
+}
+
+checkInkscapeInstalled(){
+	inkscape -V foo >/dev/null 2>&1 || { 
+	cecho "Inkscape is required to run InkExport."  red
+	cecho "Please download Inkscape from http://inkscape.org to continue." blue >&2; 
+	exit 1; 
+}
+}
+
+usage(){
+	echo ""
+	cecho "InkExport 0.0.1 by JeyKeu <shekhanzai.baloch@gmail.com>" cyan
+	echo ""
+	echo "Exports selected objects from a svg to multiple resolution icons for android."
+	echo ""
+	echo "USAGE"
+	echo "-----"
+	echo "inkexport -h"
+	echo "inkexport -f <Path-To-Svg>#<Object-Id> (REQUIRED)"
+	echo "Example:"
+	cecho "         inkexport -f my_vector.svg#Id-Of-Object-To-Export" yellow
+	echo ""
+}
+
+# echo "enter svg path to extract image from:"
+# read svg_path
+# echo "enter the id of the image from the svg:"
+# read obj_id
+exportPng(){
+    obj_id=$1
+	mkdir -p "${OUTPUT}"
+	mkdir -p "${OUTPUT}-ldpi"
+	mkdir -p "${OUTPUT}-mdpi"
+	mkdir -p "${OUTPUT}-hdpi"
+	mkdir -p "${OUTPUT}-xhdpi"
+	mkdir -p "${OUTPUT}-xxhdpi"
+	mkdir -p "${OUTPUT}-xxxhdpi"
+	cecho "Entering Inkscape interactive mode ..." yellow
+	echo ""
+	inkscape -z --shell <<COMMANDS
+	--export-id=${obj_id} --export-id-only --export-png "${OUTPUT}/${obj_id}.png"         -w 48  "${svg_path}"
+	--export-id=${obj_id} --export-id-only --export-png "${OUTPUT}-ldpi/${obj_id}.png"    -w 36  "${svg_path}"
+	--export-id=${obj_id} --export-id-only --export-png "${OUTPUT}-mdpi/${obj_id}.png"    -w 48  "${svg_path}"
+	--export-id=${obj_id} --export-id-only --export-png "${OUTPUT}-hdpi/${obj_id}.png"    -w 72  "${svg_path}"
+	--export-id=${obj_id} --export-id-only --export-png "${OUTPUT}-xhdpi/${obj_id}.png"   -w 96  "${svg_path}"
+	--export-id=${obj_id} --export-id-only --export-png "${OUTPUT}-xxhdpi/${obj_id}.png"  -w 144 "${svg_path}"
+	--export-id=${obj_id} --export-id-only --export-png "${OUTPUT}-xxxhdpi/${obj_id}.png" -w 192 "${svg_path}"
+	quit
+COMMANDS
+cecho "done." green
+echo ""
+}
+
+checkFile(){
+	if [ ! -f $1 ]; then
+       cecho "File \"$1\" does not exist!" red
+       exit 1;
+    fi
+}
+
+# Make sure Inkscape is installed
+checkInkscapeInstalled
+
+while getopts 'f:hs' flag; do
+	case "${flag}" in
+		f) files="${OPTARG}" ;;
+        h) help_usage='true' ;;
+        s) show_files=false;;
+        *) error "Unexpected option ${flag}" ;;
+    esac
+done
+
+
+if [ -z "$files" ]; then
+   usage
+   exit
+elif [ ${files} ]; then
+	# Split Filepath to get the object id appended to it using the :
+	# First index is always the name of the file
+	IFS='#';
+	ary=(${files})
+	svg_path="${ary[0]}"
+
+	checkFile "${svg_path}"
+
+	if [ ${#ary[@]} -le 1 ]; then
+		cecho "Please pass atleast one object." red
+		echo "type inkexport -h or inkexport without any attributes to display usage help."
+		echo ""
+		exit 1;
+	else
+	    for key in "${!ary[@]}"; do
+		    if [ $key -eq 0 ]; then
+			    continue;
+			fi
+			cecho "Processing object ${ary[${key}]} ..." yellow
+			exportPng ${ary[${key}]}
+		done    		
+		if [ "${show_files}" == "true" ] ; then
+			cecho "Showing generated files ..." yellow
+			#Launch the default file browser and detach the process from the shell
+			#this script is being invoked from
+			nohup xdg-open ${OUTPUT}/.. </dev/null &>/dev/null &
+		fi
+		cecho "Complete." green
+    fi
+elif [ ${help_usage}  ]; then
+	usage
+fi
+
