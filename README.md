@@ -51,7 +51,7 @@ Workfolw
 - Open Terminal
 - Enter `inkexport -f your.svg#myIcon`
 - Generated files are displayed in your default file browser
-
+- Files are generated in a `Drawable` directory from where the command is run.
 License
 ---
 
