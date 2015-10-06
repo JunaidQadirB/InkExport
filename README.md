@@ -46,10 +46,11 @@ Workfolw
 
 - Create your icon in `Inkscape` 
 - Resize it to be large
-- Set sensible ID to the object or group from the `Object Properties` dialog
+- Set a sensible ID to the object or group from the `Object Properties` dialog
 - Save the file as svg
 - Open Terminal
 - Enter `inkexport -f your.svg#myIcon`
+- Generated files are displayed in your default file browser
 
 License
 ---
