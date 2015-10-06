@@ -31,6 +31,18 @@ To Export icons from Inkscape:
 
 `inkexport -f my_vector.svg#Id-Of-Object-To-Export`
 
+Switches
+---
+`InkExport` accepts the following switches:
+
+| Switch          | Description |
+|-----------------|:-------------|
+|	-h or no switch | When excuted with `-h` or without any switch at all, it will display the usage     |
+| -f              | This switch is required. -f takes a file as argument. This is the input svg file   |
+| -s              | Do not show generated files    |
+--------------------------
+
+
 Workfolw
 ---
 
