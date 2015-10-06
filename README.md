@@ -1,5 +1,19 @@
 # InkExport
 A Bash script that exports selected objects from a svg to multiple resolution icons for android.
+
+It will generate images of the following resolutions:
+
+| Resolution | Dimension |
+|---------|:-------------|
+|	Default | 48 x 48 px   |
+| ldpi    | 36 x 36 px   |
+| mdpi    | 48 x 48 px   |
+| hdpi    | 72 x 72 px   |
+| xhdpi   | 96 x 96 px   |
+| xxhdpi  | 144 x 144 px |
+| xxxhdpi | 192 x 192 px | 
+--------------------------
+
 Installation
 ---
 
