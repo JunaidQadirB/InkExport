@@ -12,7 +12,6 @@ It will generate images of the following resolutions:
 | xhdpi   | 96 x 96 px   |
 | xxhdpi  | 144 x 144 px |
 | xxxhdpi | 192 x 192 px | 
---------------------------
 
 Installation
 ---
@@ -40,7 +39,6 @@ Switches
 |	-h or no switch | When excuted with `-h` or without any switch at all, it will display the usage     |
 | -f              | This switch is required. -f takes a file as argument. This is the input svg file   |
 | -s              | Do not show generated files    |
---------------------------
 
 
 Workfolw
