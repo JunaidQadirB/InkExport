@@ -3,6 +3,8 @@
 # Exports selected objects from a svg to multiple resolution icons for android 
 # using inkscape's cli'.
 # author: JeyKeu <shekhanzai.baloch@gmail.com>
+# Licence: MIT 
+# Version: 0.1
 
 show_files=true
 help_usage=''
